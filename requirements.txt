@@ -11,3 +11,4 @@ redis==5.0.1
 requests==2.31.0
 django-filter==24.1
 python-dateutil==2.8.2
+django-constance psycopg2-binary

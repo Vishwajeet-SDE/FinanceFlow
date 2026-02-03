@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit Profile - FinanceFlow{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil-square"></i> Edit Profile
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        <h5 class="mb-3">Personal Information</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_first_name" class="form-label">First Name</label>
+                                <input type="text" name="first_name" id="id_first_name" class="form-control" 
+                                       value="{{ user.first_name }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_last_name" class="form-label">Last Name</label>
+                                <input type="text" name="last_name" id="id_last_name" class="form-control" 
+                                       value="{{ user.last_name }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_email" class="form-label">Email</label>
+                            <input type="email" name="email" id="id_email" class="form-control" 
+                                   value="{{ user.email }}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Username</label>
+                            <input type="text" name="username" id="id_username" class="form-control" 
+                                   value="{{ user.username }}" required readonly>
+                        </div>
+
+                        <hr>
+
+                        <h5 class="mb-3">Profile Information</h5>
+
+                        <div class="mb-3">
+                            <label for="id_profile_picture" class="form-label">Profile Picture</label>
+                            {% if user_profile.profile_picture %}
+                                <div class="mb-2">
+                                    <img src="{{ user_profile.profile_picture.url }}" class="img-fluid rounded" style="max-width: 200px;">
+                                </div>
+                            {% endif %}
+                            <input type="file" name="profile_picture" id="id_profile_picture" class="form-control" accept="image/*">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_bio" class="form-label">Bio</label>
+                            <textarea name="bio" id="id_bio" class="form-control" rows="3">{{ user_profile.bio|default:'' }}</textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_phone" class="form-label">Phone Number</label>
+                            <input type="text" name="phone" id="id_phone" class="form-control" 
+                                   value="{{ user_profile.phone|default:'' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_currency" class="form-label">Preferred Currency</label>
+                            <select name="currency" id="id_currency" class="form-select">
+                                <option value="USD" {% if user_profile.currency == 'USD' %}selected{% endif %}>USD - US Dollar</option>
+                                <option value="EUR" {% if user_profile.currency == 'EUR' %}selected{% endif %}>EUR - Euro</option>
+                                <option value="GBP" {% if user_profile.currency == 'GBP' %}selected{% endif %}>GBP - British Pound</option>
+                                <option value="INR" {% if user_profile.currency == 'INR' %}selected{% endif %}>INR - Indian Rupee</option>
+                                <option value="AUD" {% if user_profile.currency == 'AUD' %}selected{% endif %}>AUD - Australian Dollar</option>
+                            </select>
+                        </div>
+
+                        <hr>
+
+                        <h5 class="mb-3">Financial Goals</h5>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_monthly_income_goal" class="form-label">Monthly Income Goal</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" name="monthly_income_goal" id="id_monthly_income_goal" class="form-control" 
+                                           value="{{ user_profile.monthly_income_goal|default:'' }}" step="0.01">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_monthly_savings_goal" class="form-label">Monthly Savings Goal</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" name="monthly_savings_goal" id="id_monthly_savings_goal" class="form-control" 
+                                           value="{{ user_profile.monthly_savings_goal|default:'' }}" step="0.01">
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                            <a href="{% url 'profile' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

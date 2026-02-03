@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ goal.name }} - FinanceFlow{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1>
+                <i class="bi bi-target"></i> {{ goal.name }}
+            </h1>
+        </div>
+        <div class="col-md-4 text-end">
+            <a href="{% url 'savings_goals_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-body">
+                    {% if goal.description %}
+                        <p class="text-muted mb-4">{{ goal.description }}</p>
+                    {% endif %}
+
+                    <!-- Progress Section -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Progress</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1">Current Amount</p>
+                                <h4>${{ goal.current_amount }}</h4>
+                            </div>
+                            <div class="col-md-6">
+                                <p class="text-muted mb-1">Target Amount</p>
+                                <h4>${{ goal.target_amount }}</h4>
+                            </div>
+                        </div>
+
+                        <div class="progress mb-3" style="height: 30px;">
+                            <div class="progress-bar bg-{% if goal.is_completed %}success{% else %}primary{% endif %}" 
+                                 role="progressbar" 
+                                 style="width: {% if goal.get_percentage_complete > 100 %}100{% else %}{{ goal.get_percentage_complete }}{% endif %}%"
+                                 aria-valuenow="{{ goal.get_percentage_complete }}" aria-valuemin="0" aria-valuemax="100">
+                                <span class="fw-bold">{{ goal.get_percentage_complete }}%</span>
+                            </div>
+                        </div>
+
+                        <p class="text-muted">
+                            Remaining to save: <strong>${{ goal.target_amount|add:'-'|add:goal.current_amount }}</strong>
+                        </p>
+                    </div>
+
+                    <hr>
+
+                    <!-- Timeline Section -->
+                    <div class="mb-4">
+                        <h5 class="mb-3">Timeline</h5>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <p class="text-muted mb-1">Created</p>
+                                <p>{{ goal.created_at|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="text-muted mb-1">Target Date</p>
+                                <p>{{ goal.target_date|date:"M d, Y" }}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="text-muted mb-1">Days Remaining</p>
+                                <p>
+                                    {% if goal.is_completed %}
+                                        <span class="badge bg-success">Completed</span>
+                                    {% elif goal.days_remaining > 0 %}
+                                        <strong>{{ goal.days_remaining }}</strong> days
+                                    {% else %}
+                                        <span class="badge bg-danger">Overdue</span>
+                                    {% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Status Section -->
+                    <div>
+                        <h5 class="mb-3">Status</h5>
+                        {% if goal.is_completed %}
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle"></i>
+                                <strong>Congratulations!</strong> You've completed this goal!
+                            </div>
+                        {% elif goal.status == 'active' %}
+                            <div class="alert alert-primary">
+                                <i class="bi bi-info-circle"></i>
+                                This goal is active. Keep saving to reach your target!
+                            </div>
+                        {% elif goal.status == 'paused' %}
+                            <div class="alert alert-warning">
+                                <i class="bi bi-pause-circle"></i>
+                                This goal is currently paused.
+                            </div>
+                        {% else %}
+                            <div class="alert alert-secondary">
+                                <i class="bi bi-x-circle"></i>
+                                This goal is no longer active.
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <!-- Info Card -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Goal Info</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-3">
+                        <strong>Category:</strong><br>
+                        {% if goal.category %}
+                            <span class="badge" style="background-color: {{ goal.category.color }}">
+                                {{ goal.category.name }}
+                            </span>
+                        {% else %}
+                            <span class="text-muted">Not assigned</span>
+                        {% endif %}
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Status:</strong><br>
+                        <span class="badge bg-{% if goal.status == 'active' %}success{% elif goal.status == 'paused' %}warning{% else %}secondary{% endif %}">
+                            {{ goal.get_status_display }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stats Card -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Statistics</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <small>
+                            <strong>Monthly Average Needed:</strong><br>
+                            {% if goal.days_remaining > 0 %}
+                                ${{ goal.target_amount|add:'-'|add:goal.current_amount|divide:goal.days_remaining|multiply:30|floatformat:2 }}
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </small>
+                    </p>
+                    <p class="mb-0">
+                        <small>
+                            <strong>Days Since Creation:</strong><br>
+                            {% if goal.created_at %}
+                                {{ goal.created_at|timesince }} ago
+                            {% endif %}
+                        </small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <a href="{% url 'savings_goals_list' %}" class="btn btn-secondary">
+                <i class="bi bi-list"></i> View All Goals
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{% if action == 'Edit' %}Edit{% else %}Create{% endif %} Transaction - FinanceFlow{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-pencil-square"></i>
+                        {% if action == 'Edit' %}Edit Transaction{% else %}Create New Transaction{% endif %}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_transaction_type" class="form-label">Type *</label>
+                                <select name="transaction_type" id="id_transaction_type" class="form-select" required>
+                                    <option value="">Select Type</option>
+                                    <option value="income" {% if form.transaction_type.value == 'income' %}selected{% endif %}>Income</option>
+                                    <option value="expense" {% if form.transaction_type.value == 'expense' %}selected{% endif %}>Expense</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_category" class="form-label">Category *</label>
+                                <select name="category" id="id_category" class="form-select" required>
+                                    <option value="">Select Category</option>
+                                    {% for category in form.category.field.queryset %}
+                                        <option value="{{ category.id }}" {% if form.category.value == category.id|stringformat:"s" %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description *</label>
+                            <input type="text" name="description" id="id_description" class="form-control" 
+                                   value="{{ form.description.value|default:'' }}" required placeholder="e.g., Grocery Shopping">
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_amount" class="form-label">Amount *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" name="amount" id="id_amount" class="form-control" 
+                                           value="{{ form.amount.value|default:'' }}" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_transaction_date" class="form-label">Date *</label>
+                                <input type="date" name="transaction_date" id="id_transaction_date" class="form-control"
+                                       value="{{ form.transaction_date.value|default:'' }}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_payment_method" class="form-label">Payment Method</label>
+                            <select name="payment_method" id="id_payment_method" class="form-select">
+                                <option value="">Select Payment Method</option>
+                                {% for method in form.payment_method.field.queryset %}
+                                    <option value="{{ method.id }}" {% if form.payment_method.value == method.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ method.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_notes" class="form-label">Notes</label>
+                            <textarea name="notes" id="id_notes" class="form-control" rows="3" 
+                                      placeholder="Additional notes (optional)">{{ form.notes.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    <input type="checkbox" name="is_recurring" id="id_is_recurring" class="form-check-input"
+                                           {% if form.is_recurring.value %}checked{% endif %}>
+                                    <label class="form-check-label" for="id_is_recurring">
+                                        Is this a recurring transaction?
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_status" class="form-label">Status</label>
+                                <select name="status" id="id_status" class="form-select">
+                                    <option value="completed" {% if form.status.value == 'completed' %}selected{% endif %}>Completed</option>
+                                    <option value="pending" {% if form.status.value == 'pending' %}selected{% endif %}>Pending</option>
+                                    <option value="cancelled" {% if form.status.value == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i>
+                                {% if action == 'Edit' %}Update{% else %}Create{% endif %} Transaction
+                            </button>
+                            <a href="{% url 'transaction_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

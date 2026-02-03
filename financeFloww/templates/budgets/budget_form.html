@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if action == 'Edit' %}Edit{% else %}Create{% endif %} Budget - FinanceFlow{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-plus-circle"></i>
+                        {% if action == 'Edit' %}Edit Budget{% else %}Create New Budget{% endif %}
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_category" class="form-label">Category *</label>
+                            <select name="category" id="id_category" class="form-select" required>
+                                <option value="">Select Category</option>
+                                {% for category in form.category.field.queryset %}
+                                    <option value="{{ category.id }}" {% if form.category.value == category.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ category.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_amount" class="form-label">Budget Amount *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" name="amount" id="id_amount" class="form-control" 
+                                           value="{{ form.amount.value|default:'' }}" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_frequency" class="form-label">Frequency *</label>
+                                <select name="frequency" id="id_frequency" class="form-select" required>
+                                    <option value="">Select Frequency</option>
+                                    <option value="monthly" {% if form.frequency.value == 'monthly' %}selected{% endif %}>Monthly</option>
+                                    <option value="quarterly" {% if form.frequency.value == 'quarterly' %}selected{% endif %}>Quarterly</option>
+                                    <option value="yearly" {% if form.frequency.value == 'yearly' %}selected{% endif %}>Yearly</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="id_start_date" class="form-label">Start Date *</label>
+                                <input type="date" name="start_date" id="id_start_date" class="form-control"
+                                       value="{{ form.start_date.value|default:'' }}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="id_end_date" class="form-label">End Date</label>
+                                <input type="date" name="end_date" id="id_end_date" class="form-control"
+                                       value="{{ form.end_date.value|default:'' }}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_alert_threshold" class="form-label">Alert Threshold (%) *</label>
+                            <div class="input-group">
+                                <input type="number" name="alert_threshold" id="id_alert_threshold" class="form-control"
+                                       value="{{ form.alert_threshold.value|default:'80' }}" min="1" max="100" required>
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <small class="text-muted">Get alert when spending reaches this percentage</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_notes" class="form-label">Notes</label>
+                            <textarea name="notes" id="id_notes" class="form-control" rows="3" 
+                                      placeholder="Optional notes about this budget">{{ form.notes.value|default:'' }}</textarea>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" name="is_active" id="id_is_active" class="form-check-input"
+                                   {% if form.is_active.value or action != 'Edit' %}checked{% endif %}>
+                            <label class="form-check-label" for="id_is_active">
+                                Active
+                            </label>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i>
+                                {% if action == 'Edit' %}Update{% else %}Create{% endif %} Budget
+                            </button>
+                            <a href="{% url 'budget_list' %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

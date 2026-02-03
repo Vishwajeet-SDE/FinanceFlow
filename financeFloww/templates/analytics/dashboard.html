@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - FinanceFlow{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1>
+                <i class="bi bi-graph-up"></i> Dashboard
+            </h1>
+            <p class="text-muted">Welcome, {{ user.first_name|default:user.username }}!</p>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h6 class="card-title mb-2">
+                        <i class="bi bi-arrow-up-circle"></i> Total Income
+                    </h6>
+                    <h4 class="mb-0">${{ monthly_income }}</h4>
+                    <small>This month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h6 class="card-title mb-2">
+                        <i class="bi bi-arrow-down-circle"></i> Total Expenses
+                    </h6>
+                    <h4 class="mb-0">${{ monthly_expense }}</h4>
+                    <small>This month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h6 class="card-title mb-2">
+                        <i class="bi bi-wallet2"></i> Net Balance
+                    </h6>
+                    <h4 class="mb-0">${{ monthly_net }}</h4>
+                    <small>This month</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h6 class="card-title mb-2">
+                        <i class="bi bi-percent"></i> Savings Rate
+                    </h6>
+                    <h4 class="mb-0">{{ savings_rate }}%</h4>
+                    <small>Percentage saved</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Expense Breakdown -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Expenses by Category</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Income Breakdown -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">Income by Category</h5>
+                </div>
+                <div class="card-body">
+                    <canvas id="incomeChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <!-- Budget Summary -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Active Budgets</h5>
+                    <a href="{% url 'budget_list' %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for budget in budget_summary %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0">{{ budget.budget.category.name }}</h6>
+                                <span class="badge {% if budget.is_over %}bg-danger{% elif budget.percentage >= budget.budget.alert_threshold %}bg-warning{% else %}bg-success{% endif %}">
+                                    {{ budget.percentage }}%
+                                </span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar {% if budget.percentage >= 100 %}bg-danger{% elif budget.percentage >= budget.budget.alert_threshold %}bg-warning{% else %}bg-success{% endif %}" 
+                                     role="progressbar" 
+                                     style="width: {% if budget.percentage > 100 %}100{% else %}{{ budget.percentage }}{% endif %}%">
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                Spent: ${{ budget.spent }} / ${{ budget.budget.amount }}
+                            </small>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center text-muted py-4">
+                            <p class="mb-0">No active budgets</p>
+                            <a href="{% url 'budget_create' %}">Create one</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Savings Goals -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Savings Goals</h5>
+                    <a href="{% url 'savings_goals_list' %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="list-group list-group-flush">
+                    {% for goal in savings_goals %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <h6 class="mb-0">{{ goal.name }}</h6>
+                                <span class="badge bg-info">{{ goal.get_percentage_complete }}%</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar bg-info" 
+                                     role="progressbar" 
+                                     style="width: {% if goal.get_percentage_complete > 100 %}100{% else %}{{ goal.get_percentage_complete }}{% endif %}%">
+                                </div>
+                            </div>
+                            <small class="text-muted">
+                                ${{ goal.current_amount }} / ${{ goal.target_amount }} 
+                                {% if goal.days_remaining > 0 %}
+                                    • {{ goal.days_remaining }} days remaining
+                                {% endif %}
+                            </small>
+                        </div>
+                    {% empty %}
+                        <div class="list-group-item text-center text-muted py-4">
+                            <p class="mb-0">No active savings goals</p>
+                            <a href="{% url 'savings_goals_list' %}">Set one up</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Transactions -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Transactions</h5>
+                    <a href="{% url 'transaction_list' %}" class="btn btn-sm btn-primary">View All</a>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Category</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for transaction in recent_transactions %}
+                                <tr>
+                                    <td>{{ transaction.transaction_date }}</td>
+                                    <td>{{ transaction.description }}</td>
+                                    <td>
+                                        {% if transaction.category %}
+                                            <span class="badge" style="background-color: {{ transaction.category.color }}">
+                                                {{ transaction.category.name }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if transaction.transaction_type == 'income' %}
+                                            <span class="text-success fw-bold">+${{ transaction.amount }}</span>
+                                        {% else %}
+                                            <span class="text-danger fw-bold">-${{ transaction.amount }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted py-4">
+                                        No transactions yet. <a href="{% url 'transaction_create' %}">Create one</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Expense Chart
+    {% if expense_by_category %}
+        const expenseCtx = document.getElementById('expenseChart').getContext('2d');
+        new Chart(expenseCtx, {
+            type: 'pie',
+            data: {
+                labels: [{% for item in expense_by_category %}'{{ item.category__name }}'{{ ", " if not forloop.last }}{% endfor %}],
+                datasets: [{
+                    data: [{% for item in expense_by_category %}{{ item.total }}{{ ", " if not forloop.last }}{% endfor %}],
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF',
+                        '#FF9F40', '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    {% endif %}
+
+    // Income Chart
+    {% if income_by_category %}
+        const incomeCtx = document.getElementById('incomeChart').getContext('2d');
+        new Chart(incomeCtx, {
+            type: 'pie',
+            data: {
+                labels: [{% for item in income_by_category %}'{{ item.category__name }}'{{ ", " if not forloop.last }}{% endfor %}],
+                datasets: [{
+                    data: [{% for item in income_by_category %}{{ item.total }}{{ ", " if not forloop.last }}{% endfor %}],
+                    backgroundColor: [
+                        '#51CF66', '#40C057', '#37B24D', '#2F9E44', '#2B8A3E',
+                        '#238636', '#1C7C3A', '#168638', '#0D7922', '#066A0F'
+                    ]
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+    {% endif %}
+</script>
+{% endblock %}

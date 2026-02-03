@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Budget Alerts - FinanceFlow{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1>
+                <i class="bi bi-bell"></i> Budget Alerts
+            </h1>
+        </div>
+    </div>
+
+    {% if alerts %}
+        <div class="row">
+            {% for alert in alerts %}
+                <div class="col-md-6 mb-4">
+                    <div class="card {% if alert.status == 'triggered' %}border-warning{% elif alert.status == 'acknowledged' %}border-info{% else %}border-success{% endif %}">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <h5 class="card-title">{{ alert.budget.category.name }}</h5>
+                                    <p class="card-text text-muted">{{ alert.message }}</p>
+                                </div>
+                                <span class="badge bg-{% if alert.status == 'triggered' %}warning{% elif alert.status == 'acknowledged' %}info{% else %}success{% endif %}">
+                                    {{ alert.get_status_display }}
+                                </span>
+                            </div>
+
+                            <div class="alert alert-light mb-3">
+                                <small>
+                                    <strong>{{ alert.percentage_at_trigger }}%</strong> of budget used
+                                </small>
+                            </div>
+
+                            <p class="text-muted mb-3">
+                                <small>
+                                    Triggered: {{ alert.triggered_at|date:"M d, Y H:i" }}
+                                </small>
+                            </p>
+
+                            {% if alert.status == 'triggered' %}
+                                <form method="post" action="{% url 'acknowledge_alert' alert.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-primary w-100">
+                                        <i class="bi bi-check-circle"></i> Mark as Acknowledged
+                                    </button>
+                                </form>
+                            {% elif alert.status == 'acknowledged' %}
+                                <a href="{% url 'budget_detail' alert.budget.id %}" class="btn btn-sm btn-info w-100">
+                                    <i class="bi bi-eye"></i> View Budget
+                                </a>
+                            {% else %}
+                                <div class="alert alert-success mb-0">
+                                    <small><i class="bi bi-check-circle"></i> Alert Resolved</small>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-success" role="alert">
+            <i class="bi bi-check-circle"></i>
+            <strong>Great news!</strong> You have no active budget alerts. Keep up the good spending habits!
+        </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'budget_list' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Budgets
+        </a>
+    </div>
+</div>
+{% endblock %}

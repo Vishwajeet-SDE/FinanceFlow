@@ -49,6 +49,11 @@
                     <div class="row">
                         <div class="col-md-6">
                             <p class="text-muted mb-1">Monthly Income Goal</p>
+                            <p>{{ user.profile.currency }} {{ user_profile.monthly_income_goal|default:"Not set" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted mb-1">Monthly Savings Goal</p>
+                            <p>{{ user.profile.currency }} {{ user_profile.monthly_savings_goal|default:"Not set" }}</p>
                             <p>${{ user_profile.monthly_income_goal|default:"Not set" }}</p>
                         </div>
                         <div class="col-md-6">
@@ -90,4 +95,6 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
 {% endblock %}

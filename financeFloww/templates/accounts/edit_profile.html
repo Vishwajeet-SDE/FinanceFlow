@@ -87,14 +87,17 @@
                             <div class="col-md-6">
                                 <label for="id_monthly_income_goal" class="form-label">Monthly Income Goal</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">$</span>
-                                    <input type="number" name="monthly_income_goal" id="id_monthly_income_goal" class="form-control" 
-                                           value="{{ user_profile.monthly_income_goal|default:'' }}" step="0.01">
+                                    <span class="input-group-text" id="income_currency_symbol">$</span>
+                                    <input type="number" name="monthly_income_goal"  id="id_monthly_income_goal" class="form-control" 
+                                        value="{{ user_profile.monthly_income_goal|default:'' }}" step="0.01">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="id_monthly_savings_goal" class="form-label">Monthly Savings Goal</label>
                                 <div class="input-group">
+                                    <span class="input-group-text" id="savings_currency_symbol">$</span>
+                                    <input type="number" name="monthly_savings_goal" id="id_monthly_savings_goal" class="form-control" 
+                                        value="{{ user_profile.monthly_savings_goal|default:'' }}" step="0.01">
                                     <span class="input-group-text">$</span>
                                     <input type="number" name="monthly_savings_goal" id="id_monthly_savings_goal" class="form-control" 
                                            value="{{ user_profile.monthly_savings_goal|default:'' }}" step="0.01">
@@ -118,4 +121,32 @@
         </div>
     </div>
 </div>
+
+<script>
+    const currencySelect = document.getElementById("id_currency");
+    const incomeSymbol = document.getElementById("income_currency_symbol");
+    const savingsSymbol = document.getElementById("savings_currency_symbol");
+
+    const currencySymbols = {
+        "USD": "$",
+        "EUR": "€",
+        "GBP": "£",
+        "INR": "₹",
+        "AUD": "A$"
+    };
+
+    function updateCurrencySymbol() {
+        const selectedCurrency = currencySelect.value;
+        const symbol = currencySymbols[selectedCurrency] || "";
+
+        incomeSymbol.innerText = symbol;
+        savingsSymbol.innerText = symbol;
+    }
+
+    currencySelect.addEventListener("change", updateCurrencySymbol);
+
+    // Run once on page load
+    updateCurrencySymbol();
+</script>
+
 {% endblock %}

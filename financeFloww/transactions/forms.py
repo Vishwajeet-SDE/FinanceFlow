@@ -72,7 +72,7 @@ class TransactionForm(forms.ModelForm):
             'tags'
         ]
 
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
 
@@ -168,7 +168,7 @@ class TransactionFilterForm(forms.Form):
         })
     )
 
-    def __init__(self, user=None, *args, **kwargs):
+    def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['category'].queryset = Category.objects.filter(user=user, is_active=True)

@@ -76,8 +76,14 @@ def logout_view(request):
 @login_required
 def profile(request):
     """User profile view"""
-    user_profile = request.user.profile
+    try:
+        user_profile = request.user.profile
     
+    except:
+        # Create profile if it doesn't exist
+        from .models import UserProfile
+        user_profile = UserProfile.objects.create(user=request.user)
+        
     context = {
         'user_profile': user_profile,
         'user': request.user,

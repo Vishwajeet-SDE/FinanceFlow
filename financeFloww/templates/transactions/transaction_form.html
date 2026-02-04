@@ -50,7 +50,7 @@
                             <div class="col-md-6">
                                 <label for="id_amount" class="form-label">Amount *</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">$</span>
+                                    <span class="input-group-text">{{ user.profile.currency }}</span>
                                     <input type="number" name="amount" id="id_amount" class="form-control" 
                                            value="{{ form.amount.value|default:'' }}" step="0.01" required>
                                 </div>

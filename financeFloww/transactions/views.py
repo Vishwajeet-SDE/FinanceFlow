@@ -15,9 +15,12 @@ def transaction_list(request):
     transactions = Transaction.objects.filter(user=request.user).select_related('category', 'payment_method')
     
     # Apply filters
-    filter_form = TransactionFilterForm(request.GET, user=request.user)
-    
+
+    filter_form = TransactionFilterForm(request.GET)
+    filter_form.fields['category'].queryset = request.user.categories.filter(is_active=True)
+    filter_form.fields['payment_method'].queryset = request.user.payment_methods.filter(is_active=True)    
     transaction_type = request.GET.get('transaction_type', 'all')
+
     if transaction_type == 'income':
         transactions = transactions.filter(transaction_type='income')
     elif transaction_type == 'expense':
@@ -75,7 +78,7 @@ def transaction_create(request):
             messages.success(request, 'Transaction created successfully!')
             return redirect('transaction_list')
     else:
-        form = TransactionForm(user=request.user)
+        form = TransactionForm()
     
     context = {'form': form, 'action': 'Create'}
     return render(request, 'transactions/transaction_form.html', context)

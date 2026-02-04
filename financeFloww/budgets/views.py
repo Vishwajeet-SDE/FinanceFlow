@@ -58,7 +58,7 @@ def budget_list(request):
 def budget_create(request):
     """Create a new budget"""
     if request.method == 'POST':
-        form = BudgetForm(request.POST, user=request.user)
+        form = BudgetForm(request.POST)
         if form.is_valid():
             budget = form.save(commit=False)
             budget.user = request.user
@@ -66,7 +66,7 @@ def budget_create(request):
             messages.success(request, 'Budget created successfully!')
             return redirect('budget_list')
     else:
-        form = BudgetForm(user=request.user)
+        form = BudgetForm()
     
     context = {'form': form, 'action': 'Create'}
     return render(request, 'budgets/budget_form.html', context)

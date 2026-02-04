@@ -93,12 +93,6 @@ DATABASES = {
         'PASSWORD': 'password',
         'HOST': 'localhost',
         'PORT': '5432',
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'floww',
-        'USER': 'postgres',
-        'PASSWORD': '@Bcaf1VSarkar',
-        'HOST': 'localhost',
-        'PORT': '5432',
     }
 }
 

@@ -21,7 +21,7 @@
                     <h6 class="card-title mb-2">
                         <i class="bi bi-arrow-up-circle"></i> Total Income
                     </h6>
-                    <h4 class="mb-0"><h4>{{ user.profile.currency }} {{ monthly_income|floatformat:2 }}</h4></h4>
+                    <h4 class="mb-0">{{ user.profile.currency }} {{ monthly_income|floatformat:2 }}</h4>
                     <small>This month</small>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                                 </div>
                             </div>
                             <small class="text-muted">
-                                Spent: ${{ budget.spent }} / ${{ budget.budget.amount }}
+                                Spent: {{ user.profile.currency }} {{ budget.spent }} / {{ user.profile.currency }} {{ budget.budget.amount }}
                             </small>
                         </div>
                     {% empty %}
@@ -145,7 +145,7 @@
                                 </div>
                             </div>
                             <small class="text-muted">
-                                ${{ goal.current_amount }} / ${{ goal.target_amount }} 
+                                {{ user.profile.currency }} {{ goal.current_amount }} / {{ user.profile.currency }} {{ goal.target_amount }} 
                                 {% if goal.days_remaining > 0 %}
                                     • {{ goal.days_remaining }} days remaining
                                 {% endif %}

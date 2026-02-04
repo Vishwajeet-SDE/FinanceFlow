@@ -80,11 +80,13 @@ def dashboard(request):
     budget_summary = []
     for budget in active_budgets:
         spent = budget.get_spent_amount()
-        percentage = min(budget.percentage, 100)
+        remaining = budget.get_remaining_amount()
+        percentage = budget.get_percentage_used()
         budget_summary.append({
             'budget': budget,
             'spent': spent,
             'percentage': percentage,
+            'remaining': remaining,
             'is_over': budget.is_over_budget(),
         })
     

@@ -67,8 +67,8 @@
 
                         <div class="mb-3">
                             <div class="d-flex justify-content-between mb-2">
-                                <span>Spent: <strong>${{ item.spent }}</strong></span>
-                                <span>Budget: <strong>${{ item.budget.amount }}</strong></span>
+                                <span>Spent: <strong>{{ user.profile.currency }} {{ item.spent }}</strong></span>
+                                <span>Budget: <strong>{{ user.profile.currency }} {{ item.budget.amount }}</strong></span>
                             </div>
                             <div class="progress">
                                 <div class="progress-bar {% if item.percentage >= 100 %}bg-danger{% elif item.percentage >= item.budget.alert_threshold %}bg-warning{% else %}bg-success{% endif %}" 
@@ -78,7 +78,7 @@
                                     {{ item.percentage }}%
                                 </div>
                             </div>
-                            <small class="text-muted">Remaining: <strong>${{ item.remaining }}</strong></small>
+                            <small class="text-muted">Remaining: <strong>{{ user.profile.currency }} {{ item.remaining }}</strong></small>
                         </div>
 
                         <div class="d-flex gap-2">

@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 {% extends 'base.html' %}
 
 {% block title %}Profile - FinanceFlow{% endblock %}
@@ -56,6 +54,11 @@
                         <div class="col-md-6">
                             <p class="text-muted mb-1">Monthly Savings Goal</p>
                             <p>{{ user.profile.currency }} {{ user_profile.monthly_savings_goal|default:"Not set" }}</p>
+                            <p>${{ user_profile.monthly_income_goal|default:"Not set" }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p class="text-muted mb-1">Monthly Savings Goal</p>
+                            <p>${{ user_profile.monthly_savings_goal|default:"Not set" }}</p>
                         </div>
                     </div>
 
@@ -93,4 +96,5 @@
     </div>
 </div>
 {% endblock %}
->>>>>>> Stashed changes
+
+{% endblock %}

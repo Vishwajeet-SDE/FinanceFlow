@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block title %}Settings - FinanceFlow{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-gear"></i> Settings
+                    </h4>
+                </div>
+                <div class="card-body p-4">
+                    <h5 class="mb-4">Account Settings</h5>
+
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Profile</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Manage your profile information</p>
+                            <a href="{% url 'edit_profile' %}" class="btn btn-primary">
+                                <i class="bi bi-pencil"></i> Edit Profile
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Privacy</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Your data is private and secure. Only you can see your transactions and budgets.</p>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="dataSharing" checked disabled>
+                                <label class="form-check-label" for="dataSharing">
+                                    Keep my data private
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Preferences</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">Currency: <strong>{{ user_profile.currency }}</strong></label>
+                                <p class="text-muted"><small>Edit in your profile settings</small></p>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email Notifications</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="budgetAlerts" checked>
+                                    <label class="form-check-label" for="budgetAlerts">
+                                        Notify me when I approach budget limits
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="goalAlerts" checked>
+                                    <label class="form-check-label" for="goalAlerts">
+                                        Notify me about savings goals progress
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">Security</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3">Update your password to keep your account secure</p>
+                            <a href="#" class="btn btn-warning" onclick="alert('Password change feature coming soon!')">
+                                <i class="bi bi-lock"></i> Change Password
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4 border-danger">
+                        <div class="card-header bg-danger text-white">
+                            <h6 class="mb-0">Danger Zone</h6>
+                        </div>
+                        <div class="card-body">
+                            <p class="mb-3 text-muted">Once you delete your account, there is no going back. Please be certain.</p>
+                            <button class="btn btn-danger" onclick="alert('Account deletion feature coming soon!')">
+                                <i class="bi bi-trash"></i> Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Account Info</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-2">
+                        <strong>Username:</strong><br>
+                        <code>{{ user.username }}</code>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Email:</strong><br>
+                        <code>{{ user.email }}</code>
+                    </p>
+                    <p class="mb-2">
+                        <strong>Member Since:</strong><br>
+                        {{ user.date_joined|date:"F d, Y" }}
+                    </p>
+                    <p class="mb-0">
+                        <strong>Last Login:</strong><br>
+                        {% if user.last_login %}
+                            {{ user.last_login|date:"F d, Y - H:i" }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h6 class="mb-0">Quick Links</h6>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'dashboard' %}" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="bi bi-graph-up"></i> Dashboard
+                    </a>
+                    <a href="{% url 'profile' %}" class="btn btn-outline-primary w-100 mb-2">
+                        <i class="bi bi-person"></i> Profile
+                    </a>
+                    <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100">
+                        <i class="bi bi-box-arrow-right"></i> Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

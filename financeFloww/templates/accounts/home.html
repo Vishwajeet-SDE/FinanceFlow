@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - FinanceFlow{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row align-items-center my-5">
+        <div class="col-md-6">
+            <h1 class="display-4 fw-bold mb-4">Welcome to FinanceFlow</h1>
+            <p class="lead mb-4">Take control of your finances with our simple and powerful personal finance tracker.</p>
+            
+            <div class="d-flex gap-2">
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started</a>
+                <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">Login</a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg">
+                <div class="card-body p-5">
+                    <h3 class="card-title mb-4">Key Features</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-3">
+                            <strong>💰 Track Transactions</strong>
+                            <p class="text-muted">Record all your income and expenses in one place</p>
+                        </li>
+                        <li class="mb-3">
+                            <strong>📊 Budget Management</strong>
+                            <p class="text-muted">Set budgets and get alerts when you're approaching limits</p>
+                        </li>
+                        <li class="mb-3">
+                            <strong>📈 Analytics & Reports</strong>
+                            <p class="text-muted">View detailed insights into your spending habits</p>
+                        </li>
+                        <li class="mb-3">
+                            <strong>🎯 Savings Goals</strong>
+                            <p class="text-muted">Track your progress towards financial goals</p>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

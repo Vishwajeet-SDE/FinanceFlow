@@ -221,6 +221,7 @@ def savings_goals_list(request):
     goals = SavingsGoal.objects.filter(user=request.user).order_by('target_date')
     
     context = {'goals': goals}
+    print("Vishwajeeeeeeeeeeeeett")
     return render(request, 'analytics/savings_goals_list.html', context)
 
 
